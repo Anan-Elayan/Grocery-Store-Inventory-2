@@ -1,0 +1,114 @@
+/*
+ * Name: Anan Elayan 
+ * ID :1211529 
+ * sectione 3*/
+
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+public class MainScene extends GridPane {
+
+	// data filed
+	final static Inventory store = new Inventory("groceries");
+	Label brand;
+	Label type;
+	Label quantity;
+	Label price;
+	TextField txtFieldType;
+	TextField txtFieldQuantity;
+	TextField txtFieldPrice;
+	CustomButton btnAction;
+	CustomButton btnCancel;
+	String lblStyle = "-fx-font-weight:bold;";
+	String txtStyle = "-fx-text-inner-color: green;";
+	Label txtMessage;
+
+	public MainScene() {
+
+		// style scene (extend grid Pane)
+		setStyle("-fx-background-color:#C0C0C0");
+		setVgap(15);
+		setHgap(8);
+		setPadding(new Insets(10, 0, 0, 10));
+
+		// radio button (type)
+		this.brand = new Label("Brand");
+		this.brand.setStyle(this.lblStyle);
+		add(this.brand, 0, 0);
+
+		// label type
+		this.type = new Label("Type");
+		this.type.setStyle(this.lblStyle);
+		add(this.type, 0, 1);
+
+		// label quantity
+		this.quantity = new Label("Quantity");
+		this.quantity.setStyle(this.lblStyle);
+		add(this.quantity, 0, 2);
+
+		// label price
+		this.price = new Label("Price");
+		this.price.setStyle(this.lblStyle);
+		add(this.price, 0, 3);
+
+		// text filed type
+		this.txtFieldType = new TextField();
+		this.txtFieldType.setStyle(this.txtStyle);
+		add(this.txtFieldType, 1, 1);
+
+		// text Field quantity
+		this.txtFieldQuantity = new TextField();
+		this.txtFieldQuantity.setStyle(this.txtStyle);
+		add(this.txtFieldQuantity, 1, 2);
+
+		// text filed price
+		this.txtFieldPrice = new TextField();
+		this.txtFieldPrice.setStyle(this.txtStyle);
+		add(this.txtFieldPrice, 1, 3);
+
+		// button Action
+		this.btnAction = new CustomButton("");
+		
+		// button cancel
+		this.btnCancel = new CustomButton("Cancel");
+		this.btnCancel.setOnAction(new HandelarCancelButton());
+		
+		// HBox button cancel and button action
+		HBox hboxButton = new HBox(10);
+		hboxButton.getChildren().addAll(this.btnAction, this.btnCancel);
+		hboxButton.setAlignment(Pos.CENTER_RIGHT);
+		add(hboxButton, 1, 5);
+
+		// message result
+		this.txtMessage = new Label();
+		this.txtMessage.setFont(Font.font("Cambria", 20));
+		this.txtMessage.setStyle("-fx-text-fill:#f03950");
+		add(this.txtMessage, 0, 6);
+		setColumnSpan(this.txtMessage, 2);// save 2 cell
+	}
+
+	//inner class to handler cancel button
+	class HandelarCancelButton implements EventHandler<ActionEvent> {
+
+		@Override
+		public void handle(ActionEvent arg0) {
+			txtFieldType.clear();
+			txtFieldPrice.clear();
+			txtFieldQuantity.clear();
+			txtMessage.setText("");
+			Stage stage = (Stage) getScene().getWindow();
+			stage.close();
+
+		}
+	}
+}

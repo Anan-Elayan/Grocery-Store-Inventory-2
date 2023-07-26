@@ -1,0 +1,5 @@
+bread - in the stock: 15, price: $9.99
+al-jebrini milk - in the stock: 2, price: $2.5
+eggs - in the stock: 2, price: $1.5
+juneidi milk - in the stock: 4, price: $1.95
+Total value: $165.65

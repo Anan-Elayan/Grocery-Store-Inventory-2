@@ -1,0 +1,215 @@
+/*
+ * Name: Anan Elayan 
+ * ID :1211529 
+ * sectione 3*/
+
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+public class UpdateItemPane extends MainScene {
+
+	// Data Field
+	InventoryDriver objUpdate;
+	ComboBox<String> comboBox;
+	Stage stage;
+	CustomButton btnSearch;
+	TextField txtBrandName;
+
+	public UpdateItemPane(InventoryDriver objUpadat) {
+
+		// storage objUpadat in objUpdate (of type Inventory Driver)
+		this.objUpdate = objUpadat;
+		this.btnAction.setText("Update");
+
+		// combo box
+		comboBox = new ComboBox<>();
+		setVgap(15);
+		setHgap(20);
+		setPadding(new Insets(10, 0, 0, 10));
+		comboBox.setEditable(true);// allow write in comboBox
+		comboBox.getItems().addAll("Brand", "Not Brand");
+		comboBox.setMaxWidth(150);
+		add(comboBox, 1, 0);
+
+		// Delete the write property in text field quantity and price
+		txtFieldQuantity.setEditable(false);
+		txtFieldPrice.setEditable(false);
+
+		// text Field brand name
+		txtBrandName = new TextField("Brand Name");
+		txtBrandName.setStyle("-fx-text-inner-color:green");
+		txtFieldType.setText("Item Type");
+		txtFieldType.setStyle("-fx-text-inner-color:green");
+		btnSearch = new CustomButton("Searsh");
+		btnSearch.setVisible(false);
+		add(btnSearch, 3, 1);
+
+		// action comboBox
+		HandelComboBox handelrComboBox = new HandelComboBox();
+		comboBox.setOnAction(handelrComboBox);
+
+		// action update button
+		BtnUpdateAction handelButton = new BtnUpdateAction();
+		btnAction.setOnAction(handelButton);
+
+		HandelarSearchButton handelSearch = new HandelarSearchButton();
+		btnSearch.setOnAction(handelSearch);
+	}
+
+	// inner class to handle comboBxo
+	class HandelComboBox implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent arg0) {
+			if (comboBox.getValue().equals("Brand")) {
+				btnSearch.setVisible(true);// show search button
+				add(txtBrandName, 2, 1);
+
+			} else {// not brand
+				getChildren().remove(txtBrandName);
+				txtBrandName.clear();
+				btnSearch.setVisible(true);
+			}
+		}
+	}
+
+	// inner class to Handle update Button
+	class BtnUpdateAction implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent arg0) {
+
+			try {
+				//check if the combo box is not selected
+				if (!(comboBox.getValue().equals("Brand")) && !(comboBox.getValue().equals("Not Brand"))) {
+					new Warning("Please Select Brand or Not");// window alert
+					return;
+				}
+			} catch (Exception e) {
+				new Warning("Pleass select Brand or not");
+				return;
+			}
+			//if text field type is empty
+			if (txtFieldType.getText().trim().isEmpty()) {
+				new Warning("Please set the type");
+				return;
+			}
+			//message to check if the search item before clicked button search
+			if (txtFieldPrice.getText().trim().isEmpty() && txtFieldQuantity.getText().trim().isEmpty()) {
+				new Warning("Please search befor update");
+				return;
+			}
+			//if text field price is empty
+			if (txtFieldPrice.getText().trim().isEmpty()) {
+				new Warning("Please set the price");
+				return;
+			}
+			//if text field Quantity is empty
+			if (txtFieldQuantity.getText().trim().isEmpty()) {
+				new Warning("Please set the quantity");
+				return;
+			}
+			int quantity;
+
+			try {
+				quantity = Integer.parseInt(txtFieldQuantity.getText().trim());
+
+			} catch (NumberFormatException e) {
+				new Warning("Invalid input for quantity");//if input not correct quantity
+				return;
+			}
+			double price;
+			try {
+				price = Double.parseDouble(txtFieldPrice.getText().trim());
+			} catch (Exception e) {
+				new Warning("Invalid input for price");//if input not correct price
+				return;
+			}
+
+			if (comboBox.getValue().equals("Brand")) {
+				if (txtBrandName.getText().trim().isEmpty()) {
+					new Warning("Please set the Brand Name");
+					return;
+				}
+				store.update(txtBrandName.getText().trim(), txtFieldType.getText().trim(), price);
+				store.update(txtBrandName.getText().trim(), txtFieldType.getText().trim(), quantity);
+				if (store.text == null) {
+					new Successfully();
+				} else
+					txtMessage.setText(store.text.getText().trim());
+			} else {// not brand
+				store.update(txtFieldType.getText().trim(), price);
+				store.update(txtFieldType.getText().trim(), quantity);
+				if (store.text == null) {
+					new Successfully();
+				} else
+					txtMessage.setText(store.text.getText().trim());
+			}
+		}
+	}
+
+	class HandelarSearchButton implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent arg0) {
+			txtFieldPrice.setText("");
+			txtFieldQuantity.setText("");
+			if (txtFieldType.getText().trim().isEmpty()) {
+				new Warning("Please set the type");
+				return;
+			}
+			if (comboBox.getValue().equals("Brand")) {
+				if (txtBrandName.getText().trim().isEmpty()) {
+					new Warning("Please set the Brand Name");
+					return;
+				}
+
+				try {
+
+					Item item = store.serchItem(txtBrandName.getText().trim(), txtFieldType.getText().trim());
+
+					if (item != null) {
+						txtFieldQuantity.setText(Integer.toString(item.getQuantity()));
+						txtFieldPrice.setText(Double.toString(item.getPrice()));
+						txtFieldQuantity.setEditable(true);
+						txtFieldPrice.setEditable(true);
+						new Successfully();
+
+						store.text = null;
+						return;
+					} else {
+						System.out.println("hi");
+						new Warning("Cannot find item");
+					}
+
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+					new Warning("Cannot find Item");
+				}
+			} else {// not Brand
+				try {
+					Item item = store.serchItem(txtFieldType.getText().trim());
+					if (item != null) {
+						txtFieldQuantity.setText(Integer.toString(item.getQuantity()));
+						txtFieldPrice.setText(Double.toString(item.getPrice()));
+						txtFieldQuantity.setEditable(true);
+						txtFieldPrice.setEditable(true);
+						new Successfully();
+						return;
+					} else {
+						System.out.println("hippppp");
+						new Warning("Cannot Find item");
+					}
+
+				} catch (Exception e) {
+					System.out.println("hoooooooi");
+					new Warning("Cannot Find item");
+					return;
+				}
+			}
+		}
+	}
+}
