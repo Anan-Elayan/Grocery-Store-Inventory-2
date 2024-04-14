@@ -1,4 +1,4 @@
-## **Grocery Store Inventory**
+# **Grocery Store Inventory**
 
 # Objective
 The objective of the "Grocery Store Inventory" project is to develop an inventory management system for a local supermarket using JavaFX framework.
